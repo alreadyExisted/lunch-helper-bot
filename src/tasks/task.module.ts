@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common'
+import { BotModule } from 'src/bot'
+import { UsersModule } from 'src/users'
 import { TasksService } from './tasks.service'
-import { BotModule } from 'src/bot/bot.module'
 
 @Module({
-  imports: [BotModule],
+  imports: [BotModule, UsersModule],
   providers: [TasksService]
 })
 export class TasksModule { }

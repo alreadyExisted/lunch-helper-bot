@@ -1,8 +1,10 @@
 import { Module, OnModuleInit } from '@nestjs/common'
-import { BotService } from './bot.service'
 import { ConfigService } from '@nestjs/config'
+import { BotService } from './bot.service'
+import { UsersModule, UsersService } from 'src/users'
 
 @Module({
+  imports: [UsersModule],
   providers: [BotService, ConfigService],
   exports: [BotService]
 })

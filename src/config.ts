@@ -8,7 +8,8 @@ const configModuleOptions: ConfigModuleOptions = {
       .valid('development', 'production')
       .default('development'),
     PORT: Joi.number().default(3000),
-    TELEGRAM_TOKEN: Joi.string().required()
+    TELEGRAM_TOKEN: Joi.string().required(),
+    DB_CONNECTION_STRING: Joi.string().required()
   }),
   validationOptions: {
     allowUnknown: true,

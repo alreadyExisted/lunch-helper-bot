@@ -18,7 +18,7 @@ export class BotService {
   }
 
   sendEverydayNotification() {
-    this.usersService.updateActiveUser().then(this.sendWhoActive)
+    this.usersService.updateActiveUser().then(user => this.sendWhoActive(user.telegramId, user))
   }
 
   private registerClient() {
@@ -40,14 +40,14 @@ export class BotService {
   }
 
   private registerCommands() {
-    this.bot.onText(/\/who/, () => {
-      this.usersService.getActiveUser().then(user => this.sendWhoActive(user))
+    this.bot.onText(/\/who/, msg => {
+      this.usersService.getActiveUser().then(user => this.sendWhoActive(msg.chat.id, user))
     })
-    this.bot.onText(/\/all/, () => {
-      this.usersService.getAllUsers().then(users => this.sendAll(users))
+    this.bot.onText(/\/all/, msg => {
+      this.usersService.getAllUsers().then(users => this.sendAll(msg.chat.id, users))
     })
     this.bot.onText(/\/switch/, msg => {
-      this.bot.sendMessage(msg.from.id, 'Соррян эта фича в следующем релизе!')
+      this.bot.sendMessage(msg.chat.id, 'Соррян эта фича в следующем релизе!')
     })
   }
 
@@ -77,13 +77,13 @@ export class BotService {
     })
   }
 
-  private sendWhoActive(user: User) {
-    this.bot.sendMessage(user.telegramChatId, `Поздравляю! Сегодня начальник обеденного перерыва <b>${user.firstName}</b>!`, { parse_mode: 'HTML' })
+  private sendWhoActive(id: number, user: User) {
+    this.bot.sendMessage(id, `Поздравляю! Сегодня начальник обеденного перерыва <b>${user.firstName}</b>!`, { parse_mode: 'HTML' })
   }
 
-  private sendAll(users: User[]) {
+  private sendAll(id: number, users: User[]) {
     this.bot.sendMessage(
-      users[0].telegramChatId,
+      id,
       `${users.map(user => `${user.order}. \`${user.firstName}\` *${user.isActive ? 'Начальник' : ''}*`).join('\n')}`,
       { parse_mode: 'Markdown' }
     )

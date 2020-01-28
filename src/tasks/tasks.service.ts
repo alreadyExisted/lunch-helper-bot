@@ -14,13 +14,13 @@ export class TasksService {
     this.logger = new Logger(TasksService.name)
   }
 
-  @Cron('0 45 11 * * 1-5')
+  @Cron('45 11 * * 1-5')
   sendEverydayNotification() {
     this.botService.sendEverydayNotification()
     this.logger.debug('Sended everyday notification')
   }
 
-  @Cron('0 00 00 * * 1-5')
+  @Cron('00 00 * * 1-5')
   updateEverydayActiveUser() {
     this.usersService.updateActiveUser()
     this.logger.debug('Updated everyday active user')

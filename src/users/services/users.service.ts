@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { User } from '../interfaces'
@@ -6,10 +6,14 @@ import { UserDTO } from '../dtos'
 
 @Injectable()
 export class UsersService {
+  private logger: Logger
+
   constructor(
     @InjectModel('Users')
     private readonly userModel: Model<User>
-  ) { }
+  ) {
+    this.logger = new Logger(UsersService.name)
+  }
 
   async getAllUsers() {
     const users = await this.userModel.find()
@@ -35,12 +39,14 @@ export class UsersService {
       order: usersCount + 1,
       isActive: true
     })
+    this.logger.debug(`added user ${creadtedUser.telegramId}`)
     return creadtedUser.save()
   }
 
   async removeUser(telegramId: number) {
     await this.userModel.deleteOne({ telegramId })
     await this.updateOrders()
+    this.logger.debug(`removed user ${telegramId}`)
     return true
   }
 
@@ -50,8 +56,15 @@ export class UsersService {
     const usersCount = await this.userModel.countDocuments()
 
     await this.userModel.updateOne({ isActive: true }, { isActive: false })
-    const order = usersCount === prevActiveUser.order ? 1 : prevActiveUser.order + 1
-    const activeUser = await this.userModel.updateOne({ order }, { isActive: true })
+    const order =
+      usersCount === prevActiveUser.order ? 1 : prevActiveUser.order + 1
+    const activeUser = await this.userModel.findOneAndUpdate(
+      { order },
+      { isActive: true },
+      { new: true }
+    )
+
+    this.logger.debug(`updated active user ${activeUser?.firstName}`)
 
     return activeUser
   }

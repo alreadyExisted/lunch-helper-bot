@@ -14,7 +14,7 @@ export class TasksService {
     this.logger = new Logger(TasksService.name)
   }
 
-  @Cron('45 11 * * 1-5')
+  @Cron('57 11 * * 1-5')
   sendEverydayNotification() {
     this.botService.sendEverydayNotification()
     this.logger.debug('Sended everyday notification')

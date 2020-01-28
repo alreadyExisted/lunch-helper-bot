@@ -113,7 +113,7 @@ export class BotService {
       `${users
         .map(
           user =>
-            `${user.order}. \`${user.firstName}\` *${
+            `${user.order}. ${user.firstName} *${
               user.isActive ? 'Начальник' : ''
             }*`
         )

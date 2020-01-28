@@ -1,5 +1,5 @@
 {
-  "name": "nestjs-telegram-bot",
+  "name": "lunch-helper-bot",
   "version": "0.0.1",
   "description": "Telegram Bot on NestJS for lunch notification order",
   "keywords": ["telegram", "bot", "nestjs", "node-telegram-bot-api", "cron", "mongoose"],

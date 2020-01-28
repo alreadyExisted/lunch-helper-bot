@@ -10,7 +10,7 @@ export class BotService {
   constructor(
     private configService: ConfigService,
     private usersService: UsersService
-  ) { }
+  ) {}
 
   initClient() {
     this.registerClient()
@@ -18,7 +18,9 @@ export class BotService {
   }
 
   sendEverydayNotification() {
-    this.usersService.updateActiveUser().then(user => this.sendWhoActive(user.telegramId, user))
+    this.usersService
+      .updateActiveUser()
+      .then(user => this.sendActiveUserNotification(user.telegramId, user))
   }
 
   private registerClient() {
@@ -41,10 +43,14 @@ export class BotService {
 
   private registerCommands() {
     this.bot.onText(/\/who/, msg => {
-      this.usersService.getActiveUser().then(user => this.sendWhoActive(msg.chat.id, user))
+      this.usersService
+        .getActiveUser()
+        .then(user => this.sendWhoActive(msg.chat.id, user))
     })
     this.bot.onText(/\/all/, msg => {
-      this.usersService.getAllUsers().then(users => this.sendAll(msg.chat.id, users))
+      this.usersService
+        .getAllUsers()
+        .then(users => this.sendAll(msg.chat.id, users))
     })
     this.bot.onText(/\/switch/, msg => {
       this.bot.sendMessage(msg.chat.id, 'Соррян эта фича в следующем релизе!')
@@ -53,13 +59,19 @@ export class BotService {
 
   private registerGroupChatCreated() {
     this.bot.on('group_chat_created', msg => {
-      this.bot.sendMessage(msg.chat.id, 'Приветствую господа! Буду мониторить как вы ходите жрац!')
+      this.bot.sendMessage(
+        msg.chat.id,
+        'Приветствую господа! Буду мониторить как вы ходите жрац!'
+      )
     })
   }
 
   private registerChatMembersChanges() {
     this.bot.on('new_chat_members', msg => {
-      const { new_chat_member: { id, first_name, last_name, is_bot }, chat } = (msg as unknown as Message)
+      const {
+        new_chat_member: { id, first_name, last_name, is_bot },
+        chat
+      } = (msg as unknown) as Message
       if (!is_bot) {
         this.usersService.addUser({
           telegramId: id,
@@ -71,20 +83,41 @@ export class BotService {
       }
     })
     this.bot.on('left_chat_member', msg => {
-      const { left_chat_member: { id, first_name } } = (msg as unknown as Message)
+      const {
+        left_chat_member: { id, first_name }
+      } = (msg as unknown) as Message
       this.usersService.removeUser(id)
       this.bot.sendMessage(msg.chat.id, `Пока ${first_name}!`)
     })
   }
 
+  private sendActiveUserNotification(id: number, user: User) {
+    this.bot.sendMessage(
+      id,
+      `Пиздюки пора НА АБЭД! Сегодня начальник обеденного перерыва <b>${user.firstName}</b>!`,
+      { parse_mode: 'HTML' }
+    )
+  }
+
   private sendWhoActive(id: number, user: User) {
-    this.bot.sendMessage(id, `Поздравляю! Сегодня начальник обеденного перерыва <b>${user.firstName}</b>!`, { parse_mode: 'HTML' })
+    this.bot.sendMessage(
+      id,
+      `Поздравляю! Сегодня начальник обеденного перерыва <b>${user.firstName}</b>!`,
+      { parse_mode: 'HTML' }
+    )
   }
 
   private sendAll(id: number, users: User[]) {
     this.bot.sendMessage(
       id,
-      `${users.map(user => `${user.order}. \`${user.firstName}\` *${user.isActive ? 'Начальник' : ''}*`).join('\n')}`,
+      `${users
+        .map(
+          user =>
+            `${user.order}. \`${user.firstName}\` *${
+              user.isActive ? 'Начальник' : ''
+            }*`
+        )
+        .join('\n')}`,
       { parse_mode: 'Markdown' }
     )
   }

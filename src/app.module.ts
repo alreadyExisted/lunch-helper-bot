@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
 import { BotModule } from './bot'
 import { TasksModule } from './tasks'
+import { AppController } from './app.controller'
 import configModuleOptions from './config'
 
 @Module({
@@ -17,6 +18,7 @@ import configModuleOptions from './config'
     BotModule,
     TasksModule
   ],
+  controllers: [AppController],
   providers: [ConfigService]
 })
-export class AppModule { }
+export class AppModule {}

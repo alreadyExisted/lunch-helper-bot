@@ -4,7 +4,6 @@ import { Controller, Get } from '@nestjs/common'
 export class AppController {
   @Get()
   root(): string {
-    const date = new Date()
-    return `${date} Day: ${date.getDay()}`
+    return `${new Date()}`
   }
 }

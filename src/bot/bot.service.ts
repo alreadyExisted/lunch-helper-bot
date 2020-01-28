@@ -100,11 +100,10 @@ export class BotService {
   }
 
   private sendWhoActive(id: number, user: User) {
-    this.bot.sendMessage(
-      id,
-      `Поздравляю! Сегодня начальник обеденного перерыва <b>${user.firstName}</b>!`,
-      { parse_mode: 'HTML' }
-    )
+    const text = this.isWeekend()
+      ? 'Не бушуй пиздюк! Сегодня выходной! Отдыхай!'
+      : `Поздравляю! Сегодня начальник обеденного перерыва <b>${user.firstName}</b>!`
+    this.bot.sendMessage(id, text, { parse_mode: 'HTML' })
   }
 
   private sendAll(id: number, users: User[]) {
@@ -114,12 +113,17 @@ export class BotService {
         .map(
           user =>
             `${user.order}. ${user.firstName} *${
-              user.isActive ? 'Начальник' : ''
+              this.isWeekend() || !user.isActive ? '' : 'Начальник'
             }*`
         )
         .join('\n')}`,
       { parse_mode: 'Markdown' }
     )
+  }
+
+  private isWeekend() {
+    const nowDay = new Date().getDay()
+    return nowDay === 0 || nowDay === 6
   }
 }
 

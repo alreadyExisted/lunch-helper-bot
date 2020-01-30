@@ -19,8 +19,8 @@ export class BotService {
 
   sendEverydayNotification() {
     this.usersService
-      .updateActiveUser()
-      .then(user => this.sendActiveUserNotification(user.telegramId, user))
+      .getActiveUser()
+      .then(user => this.sendActiveUserNotification(user.telegramChatId, user))
   }
 
   private registerClient() {

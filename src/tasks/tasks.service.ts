@@ -20,7 +20,7 @@ export class TasksService {
     this.logger.debug('Sended everyday notification')
   }
 
-  @Cron('00 00 * * 1-5')
+  @Cron('01 00 * * 1-5')
   updateEverydayActiveUser() {
     this.usersService.updateActiveUser()
     this.logger.debug('Updated everyday active user')
